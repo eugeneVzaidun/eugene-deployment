@@ -1,0 +1,24 @@
+name: Kubernetes resource validation
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      KPT_VERSION: v1.0.0-beta.18
+    steps:
+      - name: Checkout the shypple-next-deployment repo
+        uses: actions/checkout@v3
+
+      - name: Download kpt binary
+        run: |
+          curl https://github.com/GoogleContainerTools/kpt/releases/download/$KPT_VERSION/kpt_linux_amd64 --output kpt -L -s
+          chmod +x kpt
+          mv kpt /usr/local/bin
+
+      - name: Kubeval
+        run: kpt fn eval ./* --image gcr.io/kpt-fn/kubeval:v0.3.0

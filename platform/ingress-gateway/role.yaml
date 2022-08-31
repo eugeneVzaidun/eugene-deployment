@@ -1,0 +1,27 @@
+# Role and RoleBinding allow the gateway to access certificates
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: # kpt-merge: example/istio-ingressgateway
+  name: istio-ingressgateway # kpt-set: ${name}
+  namespace: gateway
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'rbac.authorization.k8s.io|Role|example|istio-ingressgateway'
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: # kpt-merge: /istio-ingressgateway
+  name: istio-ingressgateway # kpt-set: ${name}
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'rbac.authorization.k8s.io|RoleBinding|default|istio-ingressgateway'
+  namespace: gateway
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: istio-ingressgateway # kpt-set: ${name}
+subjects:
+  - kind: ServiceAccount
+    name: istio-ingressgateway # kpt-set: ${name}

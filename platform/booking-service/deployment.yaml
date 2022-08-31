@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: # kpt-merge: example/app
+  labels:
+    app: app
+  name: app
+  namespace: booking-service
+  annotations:
+    internal.kpt.dev/upstream-identifier: apps|Deployment|example|app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - image: europe-west4-docker.pkg.dev/shpl-nxt/shpl-nxt/booking:sha-76c5145 # kpt-set: europe-west4-docker.pkg.dev/shpl-nxt/shpl-nxt/${image}
+          name: app
